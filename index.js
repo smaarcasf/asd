@@ -4,10 +4,14 @@ const app = express();
 
 app.use(express.json());
 
+// Ruta para que Railway vea que el servidor está vivo
+app.get('/', (req, res) => {
+    res.send('Servidor activo y funcionando 🚀');
+});
+
 app.post('/webhook', async (req, res) => {
-    console.log("Recibido de TikFinity:", req.body);
+    console.log("Datos de TikFinity:", req.body);
     
-    // Capturamos los datos que envía TikFinity
     const info = {
         tiktokUser: req.body.nickname || req.body.username || "Usuario",
         giftName: req.body.gift_name || "Regalo"
@@ -23,16 +27,15 @@ app.post('/webhook', async (req, res) => {
             }
         });
         
-        console.log("✅ Enviado a Roblox!");
+        console.log(`✅ Enviado a Roblox: ${info.tiktokUser}`);
         res.status(200).send("OK");
     } catch (e) {
-        console.log("❌ Error enviando a Roblox:", e.message);
+        console.log("❌ Error:", e.message);
         res.status(500).send("Error");
     }
 });
 
-// Ruta de prueba para saber si está vivo
-app.get('/', (req, res) => res.send("El servidor está funcionando"));
-
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => console.log(`Servidor activo en puerto ${PORT}`));
+app.listen(PORT, () => {
+    console.log(`🚀 Puerto: ${PORT}`);
+});
