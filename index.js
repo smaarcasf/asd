@@ -1,48 +1,32 @@
-const express = require("express");
-const noblox = require("noblox.js");
-const fetch = require("node-fetch");
+const express = require('express');
+const axios = require('axios');
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const ROBLOX_API_KEY = process.env.ROBLOX_API_KEY;
-const UNIVERSE_ID = process.env.ROBLOX_UNIVERSE_ID;
-const TOPIC_NAME = process.env.TOPIC_NAME;
+const EXPERIENCE_ID = process.env.EXPERIENCE_ID;
+const TOPIC_NAME = "TikTokLiveEvents"; 
 
-app.post("/webhook", async (req, res) => {
-    const tiktokUser = req.body.value1 || "Usuario";
-    const robloxName = (req.body.value2 || "").replace(/\s+/g, "");
-    const coins = parseInt(req.body.coins) || 0;
+app.post('/webhook', async (req, res) => {
+    console.log("Datos crudos de TikFinity:", req.body);
+
+    const userData = {
+        tiktokUser: req.body.nickname || req.body.username || "Usuario",
+        giftName: req.body.gift_name || "Regalo"
+    };
 
     try {
-        let userId = 1;
-        let finalName = "FALLBACK_NPC";
-
-        if (robloxName.length >= 3 && robloxName.length <= 20) {
-            const userData = await noblox.getUsers([robloxName]);
-            if (userData.length > 0) {
-                userId = userData[0].id;
-                finalName = robloxName;
-            }
-        }
-
-        const url = `https://apis.roblox.com/messaging-service/v1/universes/${UNIVERSE_ID}/topics/${TOPIC_NAME}`;
-        await fetch(url, {
-            method: 'POST',
-            headers: { 
-                'x-api-key': ROBLOX_API_KEY, 
-                'Content-Type': 'application/json' 
-            },
-            body: JSON.stringify({ message: JSON.stringify({ tiktokUser, robloxUser: finalName, userId, coins }) })
+        const url = `https://apis.roblox.com/messaging-service/v1/universes/${EXPERIENCE_ID}/topics/${TOPIC_NAME}`;
+        await axios.post(url, { message: JSON.stringify(userData) }, {
+            headers: { 'x-api-key': ROBLOX_API_KEY, 'Content-Type': 'application/json' }
         });
-
-        console.log(`✅ Enviado a Roblox: ${tiktokUser} -> ${finalName}`);
-        res.json({ success: true });
+        console.log(`✅ Enviado a Roblox: ${userData.tiktokUser}`);
+        res.status(200).send("OK");
     } catch (e) {
-        console.log("❌ Error:", e.message);
-        res.status(500).json({ error: e.message });
+        res.status(500).send("Error");
     }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 PROXY ONLINE EN PUERTO ${PORT}`));
+app.listen(process.env.PORT || 8080);
