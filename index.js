@@ -22,15 +22,14 @@ app.post('/webhook', async (req, res) => {
             }
         });
         
-        console.log(`✅ Enviado a Roblox: ${info.tiktokUser}`);
+        console.log("✅ Enviado a Roblox!");
         res.status(200).send("OK");
     } catch (e) {
-        console.log("❌ Error:", e.response ? e.response.data : e.message);
+        console.log("❌ Error:", e.message);
         res.status(500).send("Error");
     }
 });
 
 app.get('/', (req, res) => res.send("Servidor Vivo"));
 
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`));
+app.listen(process.env.PORT || 8080);
