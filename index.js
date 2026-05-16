@@ -4,23 +4,24 @@ const app = express();
 
 app.use(express.json());
 
-const ROBLOX_API_KEY = process.env.ROBLOX_API_KEY;
-const EXPERIENCE_ID = process.env.EXPERIENCE_ID;
+// Variables de entorno
+const { ROBLOX_API_KEY, EXPERIENCE_ID } = process.env;
 
 app.post('/webhook', async (req, res) => {
-    console.log("Datos:", req.body);
+    console.log("Datos recibidos:", req.body);
     
-    const userData = {
+    // Capturamos el nombre de quien envía
+    const info = {
         tiktokUser: req.body.nickname || req.body.username || "Usuario",
         giftName: req.body.gift_name || "Regalo"
     };
 
     try {
         const url = `https://apis.roblox.com/messaging-service/v1/universes/${EXPERIENCE_ID}/topics/TikTokLiveEvents`;
-        await axios.post(url, { message: JSON.stringify(userData) }, {
+        await axios.post(url, { message: JSON.stringify(info) }, {
             headers: { 'x-api-key': ROBLOX_API_KEY, 'Content-Type': 'application/json' }
         });
-        console.log("✅ Enviado a Roblox");
+        console.log(`✅ Enviado a Roblox: ${info.tiktokUser}`);
         res.status(200).send("OK");
     } catch (e) {
         console.log("❌ Error:", e.message);
@@ -28,6 +29,6 @@ app.post('/webhook', async (req, res) => {
     }
 });
 
-app.listen(process.env.PORT || 8080, () => {
-    console.log("Servidor listo");
-});
+// Puerto dinámico para Railway
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => console.log("Servidor Online"));
