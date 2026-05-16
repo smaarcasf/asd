@@ -7,6 +7,7 @@ app.use(express.json());
 app.post('/webhook', async (req, res) => {
     console.log("Recibido de TikFinity:", req.body);
     
+    // Capturamos los datos que envía TikFinity
     const info = {
         tiktokUser: req.body.nickname || req.body.username || "Usuario",
         giftName: req.body.gift_name || "Regalo"
@@ -25,11 +26,13 @@ app.post('/webhook', async (req, res) => {
         console.log("✅ Enviado a Roblox!");
         res.status(200).send("OK");
     } catch (e) {
-        console.log("❌ Error:", e.message);
+        console.log("❌ Error enviando a Roblox:", e.message);
         res.status(500).send("Error");
     }
 });
 
-app.get('/', (req, res) => res.send("Servidor Vivo"));
+// Ruta de prueba para saber si está vivo
+app.get('/', (req, res) => res.send("El servidor está funcionando"));
 
-app.listen(process.env.PORT || 8080);
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => console.log(`Servidor activo en puerto ${PORT}`));
