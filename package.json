@@ -1,13 +1,13 @@
 {
-  "name": "roblox-tiktok-proxy",
+  "name": "roblox-tiktok-bridge",
   "version": "1.0.0",
+  "description": "Bridge for TikTok to Roblox",
   "main": "index.js",
-  "dependencies": {
-    "express": "^4.18.2",
-    "noblox.js": "^4.14.0",
-    "node-fetch": "^2.6.7"
-  },
   "scripts": {
     "start": "node index.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "express": "^4.18.2"
   }
 }
